@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priority List — Athlete Accelerator | Meade Performance</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:    #080808;
+  --offwhite: #F5F2EC;
+  --grey:     #111110;
+  --mid:      #1A1A18;
+  --rule:     #2A2A28;
+  --dim:      #9A9A94;
+  --dim2:     #6A6A66;
+}
+
+html, body {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: var(--black);
+  background-image: url('3.png');
+  background-size: cover;
+  background-position: center 25%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+.overlay {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 40%, rgba(8,8,8,0.15) 0%, rgba(8,8,8,0.0) 100%),
+    linear-gradient(to bottom, rgba(8,8,8,0.90) 0%, rgba(8,8,8,0.82) 100%);
+}
+
+/* ── NAV ── */
+.nav {
+  width: 100%;
+  max-width: 580px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.nav-brand-main {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+}
+
+.nav-brand-sep {
+  width: 16px;
+  height: 0.5px;
+  background: var(--dim2);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.nav-brand-sub {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--dim2);
+}
+
+.nav-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim2);
+}
+
+/* ── CARD ── */
+.card {
+  width: 100%;
+  max-width: 580px;
+  background: rgba(8, 8, 8, 0.93);
+  border: 0.5px solid rgba(42, 42, 40, 0.8);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  padding: 52px 48px 48px;
+  box-shadow:
+    0 32px 80px -16px rgba(0,0,0,0.82),
+    0 8px 32px -8px rgba(0,0,0,0.55),
+    inset 0 0.5px 0 rgba(245,242,236,0.05);
+}
+
+/* ── HEADER ── */
+.card-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.eyebrow-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--offwhite);
+  opacity: 0.3;
+}
+
+.eyebrow-text {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--dim2);
+}
+
+.headline {
+  font-size: clamp(22px, 3.8vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  margin-bottom: 6px;
+}
+
+.headline-accent {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.58em;
+  color: var(--dim);
+  text-transform: none;
+  letter-spacing: 0;
+  display: block;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.rule {
+  width: 28px;
+  height: 0.5px;
+  background: var(--rule);
+  margin: 20px auto;
+}
+
+.subtext {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--dim);
+  line-height: 1.65;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* ── PERKS LIST ── */
+.perks {
+  list-style: none;
+  border-top: 0.5px solid var(--rule);
+  margin-bottom: 32px;
+}
+
+.perks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 0.5px solid var(--rule);
+}
+
+.perk-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  color: var(--dim);
+}
+
+.perk-check svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--dim);
+  stroke-width: 2;
+}
+
+.perk-text {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  line-height: 1.4;
+}
+
+.perk-sub {
+  display: block;
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--dim);
+  margin-top: 2px;
+}
+
+/* ── FORM ── */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-input {
+  width: 100%;
+  background: rgba(26, 26, 24, 0.8);
+  border: 0.5px solid var(--rule);
+  color: var(--offwhite);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  padding: 15px 18px;
+  outline: none;
+  border-radius: 2px;
+  transition: border-color 200ms ease, background 200ms ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-input::placeholder { color: var(--dim2); }
+
+.form-input:focus {
+  border-color: var(--dim);
+  background: rgba(31, 31, 29, 0.9);
+}
+
+.form-input:hover:not(:focus) { border-color: #3a3a38; }
+
+@media (max-width: 580px) {
+  .form-input { font-size: 16px; }
+}
+
+.submit-btn {
+  width: 100%;
+  background: var(--offwhite);
+  color: var(--black);
+  border: none;
+  border-radius: 2px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 17px 24px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition:
+    transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 150ms ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.submit-btn:hover {
+  background: #e8e5df;
+  transform: translateY(-1px);
+}
+
+.submit-btn:active { transform: translateY(1px); }
+
+.submit-btn:focus-visible {
+  outline: 2px solid var(--dim);
+  outline-offset: 3px;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#form-error {
+  font-size: 12px;
+  color: #c0624a;
+  text-align: center;
+  display: none;
+  margin-top: 2px;
+}
+
+.fine-print {
+  font-size: 11px;
+  color: var(--dim2);
+  margin-top: 16px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* ── SUCCESS STATE ── */
+.success-state {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  text-align: center;
+}
+
+.success-state.visible {
+  display: block;
+  animation: fadeUpIn 450ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes fadeUpIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.success-icon {
+  width: 52px;
+  height: 52px;
+  border: 0.5px solid rgba(245,242,236,0.14);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 28px;
+}
+
+.success-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--offwhite);
+  opacity: 0.65;
+}
+
+.success-headline {
+  font-size: clamp(36px, 6vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--offwhite);
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+.success-subtext {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--dim);
+  line-height: 1.65;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* ── ENTRANCE ANIMATIONS ── */
+.card {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms forwards;
+}
+
+.nav {
+  opacity: 0;
+  animation: fadeIn 400ms ease 0ms forwards;
+}
+
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* ── MOBILE ── */
+@media (max-width: 540px) {
+  .overlay {
+    padding: 24px 16px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.93) 0%, rgba(8,8,8,0.87) 100%);
+    justify-content: flex-start;
+    padding-top: 28px;
+  }
+
+  .nav { max-width: 100%; margin-bottom: 20px; }
+
+  .card {
+    padding: 32px 24px 36px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .headline { font-size: 22px; }
+  .subtext { font-size: 15px; }
+  .perk-text { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="overlay">
+
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="nav-brand-main">Meade</span>
+      <span class="nav-brand-sep"></span>
+      <span class="nav-brand-sub">Performance</span>
+    </div>
+    <span class="nav-tag">Priority List</span>
+  </nav>
+
+  <div class="card">
+
+    <!-- FORM STATE -->
+    <div id="form-state">
+
+      <div class="card-header">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          <span class="eyebrow-text">Meade Performance Coaching</span>
+          <span class="eyebrow-dot"></span>
+        </div>
+
+        <h1 class="headline">
+          Join the Priority List
+          <em class="headline-accent">and be first in line when doors open</em>
+        </h1>
+
+        <div class="rule"></div>
+
+        <p class="subtext">Priority members get exclusive early access, the best pricing available, and first pick of limited spots — before anyone else.</p>
+      </div>
+
+      <ul class="perks">
+        <li>
+          <span class="perk-check"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <span class="perk-text">
+            Early Bird Pricing
+            <em class="perk-sub">Locked-in rate before the price goes up — priority members only.</em>
+          </span>
+        </li>
+        <li>
+          <span class="perk-check"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <span class="perk-text">
+            First Access to Spots
+            <em class="perk-sub">The Accelerator has limited places. Priority members get in before the public.</em>
+          </span>
+        </li>
+        <li>
+          <span class="perk-check"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <span class="perk-text">
+            7-Day Performance Email Series
+            <em class="perk-sub">Practical insights on S&C, speed, and physical preparation — starting the day you join.</em>
+          </span>
+        </li>
+      </ul>
+
+      <form class="signup-form" id="priority-form" novalidate>
+        <input
+          class="form-input"
+          type="text"
+          id="mce-FNAME"
+          name="FNAME"
+          placeholder="First Name"
+          autocomplete="given-name"
+          required
+        >
+        <input
+          class="form-input"
+          type="email"
+          id="mce-EMAIL"
+          name="EMAIL"
+          placeholder="Email Address"
+          required
+          autocomplete="email"
+        >
+        <input type="hidden" name="tags" value="2166">
+        <input type="text" name="b_020c14cbcdd6f0f323ec3e923_3e0a8b521f" tabindex="-1" value="" style="position:absolute;left:-5000px;" aria-hidden="true">
+        <div id="form-error"></div>
+        <button type="submit" class="submit-btn" id="priority-submit">
+          Join the Priority List
+        </button>
+      </form>
+
+      <p class="fine-print">No spam. Unsubscribe anytime.</p>
+
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="success-state">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h2 class="headline success-headline">You're In</h2>
+      <div class="rule"></div>
+      <p class="success-subtext">You're on the Priority List. Check your inbox — your 7-day performance email series starts now.</p>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var form         = document.getElementById('priority-form');
+  var emailEl      = document.getElementById('mce-EMAIL');
+  var fnameEl      = document.getElementById('mce-FNAME');
+  var btn          = document.getElementById('priority-submit');
+  var errEl        = document.getElementById('form-error');
+  var formState    = document.getElementById('form-state');
+  var successState = document.getElementById('success-state');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var fname = fnameEl.value.trim();
+    var email = emailEl.value.trim();
+
+    if (!fname) {
+      errEl.textContent = 'Please enter your first name.';
+      errEl.style.display = 'block';
+      fnameEl.focus();
+      return;
+    }
+
+    if (!email) {
+      errEl.textContent = 'Please enter your email address.';
+      errEl.style.display = 'block';
+      emailEl.focus();
+      return;
+    }
+
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Securing your spot…';
+
+    var cbName = 'mcCb_' + Date.now();
+
+    window[cbName] = function (data) {
+      delete window[cbName];
+      if (data.result === 'success') {
+        formState.style.opacity = '0';
+        formState.style.transform = 'translateY(-8px)';
+        formState.style.transition = 'opacity 250ms ease, transform 250ms ease';
+        setTimeout(function () {
+          formState.style.display = 'none';
+          successState.classList.add('visible');
+        }, 260);
+      } else {
+        var msg = data.msg
+          ? data.msg.replace(/<[^>]+>/g, '').replace(/^\d+ - /, '')
+          : 'Something went wrong — please try again.';
+        errEl.textContent = msg;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Join the Priority List';
+      }
+    };
+
+    var url = 'https://app.us22.list-manage.com/subscribe/post-json'
+      + '?u=020c14cbcdd6f0f323ec3e923'
+      + '&id=3e0a8b521f'
+      + '&f_id=0051c2e1f0'
+      + '&tags=2166'
+      + '&EMAIL=' + encodeURIComponent(email)
+      + '&FNAME=' + encodeURIComponent(fname)
+      + '&b_020c14cbcdd6f0f323ec3e923_3e0a8b521f='
+      + '&c=' + cbName;
+
+    var script = document.createElement('script');
+    script.src = url;
+    script.onerror = function () {
+      errEl.textContent = 'Network error — please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Join the Priority List';
+    };
+    document.head.appendChild(script);
+  });
+})();
+</script>
+
+</body>
+</html>
